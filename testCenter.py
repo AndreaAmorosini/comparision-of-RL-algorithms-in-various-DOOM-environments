@@ -9,6 +9,8 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common import evaluation, policies
 import os
+import wandb
+from wandb.integration.sb3 import WandbCallback
 
 
 import vizdoom.gymnasium_wrapper  # noqa
@@ -30,23 +32,14 @@ CHECKPOINT_DIR = "./checkpoints/train/center"
 LOG_DIR = "./logs/center"
 MODEL_SAVE_DIR = "./final_models/center"
 
-
-
-class TrainAndLoggingCallback(BaseCallback):
-    def __init__(self, check_freq, save_path, verbose=1):
-        super(TrainAndLoggingCallback, self).__init__(verbose)
-        self.check_freq = check_freq
-        self.save_path = save_path
-
-    def _init_callback(self):
-        if self.save_path is not None:
-            os.makedirs(self.save_path, exist_ok=True)
-
-    def _on_step(self):
-        if self.n_calls % self.check_freq == 0:
-            print(f"Step: {self.n_calls}")
-            self.model.save(f"{self.save_path}/model_{self.n_calls}")
-        return True
+config = {
+    "env": DEFAULT_ENV,
+    "image_shape": IMAGE_SHAPE,
+    "training_timesteps": TRAINING_TIMESTEPS,
+    "n_steps": N_STEPS,
+    "n_envs": N_ENVS,
+    "frame_skip": FRAME_SKIP,
+}
 
 
 def main(args):
@@ -62,22 +55,32 @@ def main(args):
         env = gymnasium.wrappers.HumanRendering(env)
         return env
 
-    # if os.listdir(MODEL_SAVE_DIR) == []:
-    #     last_check = 0
-    # else:
-    #     last_check = len(os.listdir(CHECKPOINT_DIR))
-    # chekpoint_dir = f"{CHECKPOINT_DIR}/model_{last_check + 1}"
-    # print("Saving to ", chekpoint_dir)
+    models = os.listdir(MODEL_SAVE_DIR)
 
-    # callback = TrainAndLoggingCallback(check_freq=EVAL_FREQ, save_path=chekpoint_dir)
+    if models == []:
+        nrModel = 0
+    else:
+        nrModel = len(models) + 1
 
-    envs = make_vec_env(args.env, n_envs=N_ENVS, wrapper_class=wrap_env)
+    envs = make_vec_env(args.env, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs={"frame_skip": FRAME_SKIP})
+
+    # Initialize wandb
+    run = wandb.init(
+        project="vizdoom",
+        name="vizdoom-Center" + str(nrModel + 1),
+        group="center",
+        tags=["ppo", "vizdoom", "DefendCenter"],
+        config=config,
+        sync_tensorboard=True,
+        save_code=True,
+        monitor_gym=True,
+    )
 
     # agent = PPO(
     #     "MultiInputPolicy", envs, n_steps=N_STEPS, verbose=2, tensorboard_log=LOG_DIR
     # )
     agent = PPO(
-        policies.MultiInputActorCriticPolicy, envs, n_steps=N_STEPS, verbose=1, tensorboard_log=LOG_DIR,
+        policies.MultiInputActorCriticPolicy, envs, n_steps=N_STEPS, verbose=1, tensorboard_log=LOG_DIR + "/" + run.id,
         learning_rate=1e-5, 
         n_epochs=10,
         batch_size=64,
@@ -88,14 +91,17 @@ def main(args):
     # This will print out the results in the console.
     # If agent gets better, "ep_rew_mean" should increase steadily
     # agent.learn(total_timesteps=TRAINING_TIMESTEPS, callback=callback)
-    agent.learn(total_timesteps=TRAINING_TIMESTEPS)
+    agent.learn(
+        total_timesteps=TRAINING_TIMESTEPS,
+        callback=WandbCallback(
+            model_save_path=f"{MODEL_SAVE_DIR}/model_{nrModel}",
+            verbose=2,
+        ),
+    )
     
-    models = os.listdir(MODEL_SAVE_DIR)
-    if models == []:
-        nrModel = 0
-    else:
-        nrModel = len(models) + 1
-    agent.save(f"{MODEL_SAVE_DIR}/model_{nrModel}")
+    run.finish()
+    
+    # agent.save(f"{MODEL_SAVE_DIR}/model_{nrModel}")
 
 
 if __name__ == "__main__":

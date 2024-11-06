@@ -8,6 +8,7 @@ import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.evaluation import evaluate_policy
 import time
+from customWrapper import CustomVizDoomWrapper
 
 
 IMAGE_SHAPE = (60, 80)
@@ -37,36 +38,39 @@ class ObservationWrapper(gym.ObservationWrapper):
 
         # Create new observation space with the new shape
         print(env.observation_space)
-        num_channels = env.observation_space["screen"].shape[-1]
+        num_channels = env.observation_space["frame"].shape[-1]
         new_shape = (shape[0], shape[1], num_channels)
         self.observation_space = gym.spaces.Box(
             0, 255, shape=new_shape, dtype=np.uint8
         )
 
     def observation(self, observation):
+        print("Observation")
+        print(observation)
         observation = cv2.resize(observation["screen"], self.image_shape_reverse)
         return observation
 
 
 
 # Define the path to your saved model
-# MODEL_PATH = "final_models/basic/model_0.zip"
+MODEL_PATH = "final_models/basic/model.zip"
 # MODEL_PATH = "final_models/center/model_3.zip"
-MODEL_PATH = "final_models/corridor/model_2.zip"
+# MODEL_PATH = "final_models/corridor/model_2.zip"
 
 
 # Load the trained model
 model = PPO.load(MODEL_PATH)
 
-# doom_env = "VizdoomBasic-v0"
-doom_env = "VizdoomCorridor-v0"
+doom_env = "VizdoomBasic-v0"
+# doom_env = "VizdoomCorridor-v0"
 # doom_env = "VizdoomDefendCenter-v0"
 
 
 # Initialize the environment for playing (same config as training)
-env = gym.make(doom_env, render_mode="rgb_array", frame_skip=4)
+env = gym.make(doom_env, render_mode="rgb_array", frame_skip=1)
 #Only for basic env
-# env = ObservationWrapper(env)
+env = CustomVizDoomWrapper(env=env)
+env = ObservationWrapper(env)
 env = gym.wrappers.TransformReward(env, lambda r: r * 0.01)
 env = gym.wrappers.HumanRendering(env)
 

@@ -8,7 +8,6 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import BaseCallback
 import os
-import vizdoom.gymnasium_wrapper.base_gymnasium_env
 import wandb
 from wandb.integration.sb3 import WandbCallback
 
@@ -105,7 +104,6 @@ def main(args):
         return env
 
     if os.listdir(CHECKPOINT_DIR) == []:
-        last_check = 0
         chekpoint_dir = f"{CHECKPOINT_DIR}/model_0"
     else:
         last_check = int(os.listdir(CHECKPOINT_DIR)[-1].split("_")[1])
@@ -118,9 +116,6 @@ def main(args):
     # Initialize wandb
     run = wandb.init(
         project="vizdoom",
-        name = "vizdoom-basic" + str(last_check + 1),
-        group = "basic",
-        tags=["ppo", "vizdoom", "basic"],
         config=config,
         sync_tensorboard=True,
         save_code=True,
