@@ -35,42 +35,58 @@ class ObservationWrapper(gym.ObservationWrapper):
         self.image_shape = shape
         self.image_shape_reverse = shape[::-1]
         self.env.frame_skip = FRAME_SKIP
+        
+        assert isinstance(self.image_shape_reverse, tuple) and all(
+            isinstance(dim, int) and dim > 0 for dim in self.image_shape_reverse
+        ), f"Invalid target shape: {self.image_shape_reverse}"
 
         # Create new observation space with the new shape
+        print("Observation Space")
         print(env.observation_space)
         num_channels = env.observation_space["frame"].shape[-1]
         new_shape = (shape[0], shape[1], num_channels)
         self.observation_space = gym.spaces.Box(
             0, 255, shape=new_shape, dtype=np.uint8
         )
+        
+    def post_process_frame(self, frame):
+        return (frame * 255).astype(np.uint8)
+    
+    def process_frame(self, frame):
+        normalized_frame = frame / 255.0
+        return normalized_frame
+
+
 
     def observation(self, observation):
         print("Observation")
         print(observation)
-        observation = cv2.resize(observation["screen"], self.image_shape_reverse)
+        # observation = self.post_process_frame(observation["frame"])
+        observation = observation["frame"]
+        observation = cv2.resize(observation, self.image_shape_reverse)
         return observation
 
 
 
 # Define the path to your saved model
-MODEL_PATH = "final_models/basic/model.zip"
-# MODEL_PATH = "final_models/center/model_3.zip"
+# MODEL_PATH = "final_models/basic/model_0.zip"
+MODEL_PATH = "final_models/center/model_5/model.zip"
 # MODEL_PATH = "final_models/corridor/model_2.zip"
 
 
 # Load the trained model
 model = PPO.load(MODEL_PATH)
 
-doom_env = "VizdoomBasic-v0"
+# doom_env = "VizdoomBasic-v0"
 # doom_env = "VizdoomCorridor-v0"
-# doom_env = "VizdoomDefendCenter-v0"
+doom_env = "VizdoomDefendCenter-v0"
 
 
 # Initialize the environment for playing (same config as training)
 env = gym.make(doom_env, render_mode="rgb_array", frame_skip=1)
 #Only for basic env
-env = CustomVizDoomWrapper(env=env)
-env = ObservationWrapper(env)
+env = CustomVizDoomWrapper(env=env, normalize=True, stack_frames=False, stack_size=1)
+# env = ObservationWrapper(env)
 env = gym.wrappers.TransformReward(env, lambda r: r * 0.01)
 env = gym.wrappers.HumanRendering(env)
 
