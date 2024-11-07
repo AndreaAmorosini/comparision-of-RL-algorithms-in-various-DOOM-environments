@@ -81,11 +81,11 @@ class CustomVizDoomWrapper(Wrapper):
         ammo = game_variables[0]
         health = game_variables[1]
         
-        if ammo < self.initial_ammo:
-            reward -= 0.1
+        # if ammo < self.initial_ammo:
+        #     reward -= 0.1
             
         if health < self.initial_health:
-            reward -= 0.1
+            reward -= 0.01
           
         return reward
 
