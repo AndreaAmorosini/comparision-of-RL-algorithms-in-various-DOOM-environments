@@ -70,8 +70,8 @@ class ObservationWrapper(gym.ObservationWrapper):
 
 # Define the path to your saved model
 # MODEL_PATH = "final_models/basic/model_0.zip"
-MODEL_PATH = "final_models/center/model_5/model.zip"
-# MODEL_PATH = "final_models/corridor/model_2.zip"
+# MODEL_PATH = "final_models/center/model_22/model.zip"
+MODEL_PATH = "final_models/corridor/model_8/model.zip"
 
 
 # Load the trained model
@@ -79,14 +79,18 @@ model = PPO.load(MODEL_PATH)
 
 # doom_env = "VizdoomBasic-v0"
 # doom_env = "VizdoomCorridor-v0"
-doom_env = "VizdoomDefendCenter-v0"
+doom_env = "VizdoomCorridor-custom-v0"
+# doom_env = "VizdoomDefendCenter-v0"
+# doom_env = "VizdoomDefendCenter-custom-v0"
 
 
 # Initialize the environment for playing (same config as training)
-env = gym.make(doom_env, render_mode="rgb_array", frame_skip=1)
+env = gym.make(doom_env, render_mode="rgb_array", frame_skip=4)
 #Only for basic env
 env = CustomVizDoomWrapper(env=env, normalize=True, stack_frames=False, stack_size=1)
 # env = ObservationWrapper(env)
+# env = gym.wrappers.FrameStackObservation(env, num_stack=4, padding_type = "zero")
+# env = gym.wrappers.NormalizeObservation(env)
 env = gym.wrappers.TransformReward(env, lambda r: r * 0.01)
 env = gym.wrappers.HumanRendering(env)
 

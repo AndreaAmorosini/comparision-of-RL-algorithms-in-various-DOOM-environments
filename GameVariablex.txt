@@ -1,0 +1,97 @@
+# Available game variables in VizDoom
+# These can be accessed through GameVariable enum
+
+AMMUNITION0                     # Current amount of ammunition for weapon slot #0
+AMMUNITION1                     # Current amount of ammunition for weapon slot #1
+AMMUNITION2                     # Current amount of ammunition for weapon slot #2
+AMMUNITION3                     # Current amount of ammunition for weapon slot #3
+AMMUNITION4                     # Current amount of ammunition for weapon slot #4
+AMMUNITION5                     # Current amount of ammunition for weapon slot #5
+AMMUNITION6                     # Current amount of ammunition for weapon slot #6
+AMMUNITION7                     # Current amount of ammunition for weapon slot #7
+AMMUNITION8                     # Current amount of ammunition for weapon slot #8
+AMMUNITION9                     # Current amount of ammunition for weapon slot #9
+
+AMMO0_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #0
+AMMO1_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #1
+AMMO2_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #2
+AMMO3_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #3
+AMMO4_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #4
+AMMO5_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #5
+AMMO6_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #6
+AMMO7_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #7
+AMMO8_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #8
+AMMO9_IN_BACKPACK              # Amount of ammo in backpack for weapon slot #9
+
+ARMOR                          # Current armor value
+ARMOR_MAX                      # Maximum armor value
+ARMOR_INCREMENT               
+ARMOR_PROTECTION              
+
+ATTACK_READY                   # Indicates if attack can be performed
+AUTOMAP_READY                  # Indicates if automap is available
+
+BLUE_ARMOR                     # Indicates if blue armor is possessed
+BFGCELLS                       # Amount of BFG cells
+BFGCELLS_IN_BACKPACK          # Amount of BFG cells in backpack
+
+CLIP_AMMO                      # Amount of clip ammo
+CLIP_AMMO_IN_BACKPACK         # Amount of clip ammo in backpack
+
+SELECTED_WEAPON               # Currently selected weapon
+SELECTED_WEAPON_AMMO         # Ammo for currently selected weapon
+
+DAMAGE_TAKEN                  # Damage taken in last tick
+DAMAGE_COUNT                 # Damage timer
+DEAD                         # Indicates if player is dead
+DEATHCOUNT                   # Number of deaths
+
+FRAGMENTS_PICKED_UP          # Number of item fragments picked up
+HEALTH                       # Current health
+ITEMCOUNT                    # Number of collected items
+KILLCOUNT                    # Number of killed monsters
+
+MAP_EXPLORED                 # Percentage of map explored
+MAP_PROGRESS                 # Progress through the map (0-100)
+MOVEMENT                     # Movement input value
+MOVING                       # Indicates if player is moving
+
+ON_GROUND                    # Indicates if player is on ground
+PLAYER_NUMBER               # Player number/ID
+POSITION_X                  # Player X coordinate
+POSITION_Y                  # Player Y coordinate
+POSITION_Z                  # Player Z coordinate
+
+ROCKET_LAUNCHER             # Indicates if rocket launcher is possessed
+ROCKETS                     # Amount of rockets
+ROCKETS_IN_BACKPACK        # Amount of rockets in backpack
+
+SECRETCOUNT                # Number of discovered secrets
+SHELL_AMMO                # Amount of shell ammo
+SHELL_AMMO_IN_BACKPACK   # Amount of shell ammo in backpack
+
+USER1                     # User variable 1 (can be used for custom purposes)
+USER2                     # User variable 2
+USER3                     # User variable 3
+USER4                     # User variable 4
+USER5                     # User variable 5
+USER6                     # User variable 6
+USER7                     # User variable 7
+USER8                     # User variable 8
+USER9                     # User variable 9
+USER10                    # User variable 10
+
+VELOCITY_X                # Player velocity on X axis
+VELOCITY_Y                # Player velocity on Y axis
+VELOCITY_Z                # Player velocity on Z axis
+
+WEAPON0                   # Indicates if weapon 0 is possessed
+WEAPON1                   # Indicates if weapon 1 is possessed
+WEAPON2                   # Indicates if weapon 2 is possessed
+WEAPON3                   # Indicates if weapon 3 is possessed
+WEAPON4                   # Indicates if weapon 4 is possessed
+WEAPON5                   # Indicates if weapon 5 is possessed
+WEAPON6                   # Indicates if weapon 6 is possessed
+WEAPON7                   # Indicates if weapon 7 is possessed
+WEAPON8                   # Indicates if weapon 8 is possessed
+WEAPON9                   # Indicates if weapon 9 is possessed

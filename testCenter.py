@@ -11,23 +11,28 @@ from stable_baselines3.common import evaluation, policies
 import os
 import wandb
 from wandb.integration.sb3 import WandbCallback
-from customWrapper import CustomVizDoomWrapper
+from customWrapper import CustomVizDoomWrapper, ObservationWrapper
 
 
 import vizdoom.gymnasium_wrapper  # noqa
 
 
-DEFAULT_ENV = "VizdoomDefendCenter-v0"
+# DEFAULT_ENV = "VizdoomDefendCenter-v0"
+DEFAULT_ENV = "VizdoomDefendCenter-custom-v0"
 AVAILABLE_ENVS = [env for env in gymnasium.envs.registry.keys() if "Vizdoom" in env]
 # Height and width of the resized image
 IMAGE_SHAPE = (60, 80)
 EVAL_FREQ = 50000
 
 # Training parameters
-TRAINING_TIMESTEPS = 300000
+TRAINING_TIMESTEPS = 200000
 N_STEPS = 1024
 N_ENVS = 2
 FRAME_SKIP = 4
+LEARNING_RATE = 1e-4
+N_EPOCHS = 10
+BATCH_SIZE = 64
+GAMMA = 0.99
 
 CHECKPOINT_DIR = "./checkpoints/train/center"
 LOG_DIR = "./logs/center"
@@ -40,6 +45,9 @@ config = {
     "n_steps": N_STEPS,
     "n_envs": N_ENVS,
     "frame_skip": FRAME_SKIP,
+    "learning_rate": LEARNING_RATE,
+    "gamma": GAMMA,
+    "n_epochs": N_EPOCHS,
 }
 
 
@@ -63,7 +71,7 @@ def main(args):
     # Initialize wandb
     run = wandb.init(
         project="vizdoom",
-        name="vizdoom-Center_" + str(nrModel + 1),
+        name="vizdoom_Center_" + str(nrModel),
         group="center",
         tags=["ppo", "vizdoom", "DefendCenter"],
         config=config,
@@ -77,9 +85,10 @@ def main(args):
         n_steps=N_STEPS,
         verbose=1,
         tensorboard_log=LOG_DIR + "/" + run.id,
-        learning_rate=1e-4, 
-        n_epochs=10,
-        batch_size=64,
+        learning_rate=LEARNING_RATE, 
+        n_epochs=N_EPOCHS,
+        batch_size=BATCH_SIZE,
+        gamma=GAMMA,
     )
     
     # agent = PPO(
@@ -99,6 +108,8 @@ def main(args):
         ),
     )
     
+    # run.log_model(path=f"{MODEL_SAVE_DIR}/model_{nrModel}/model.zip", name="vizDoom_Center_" + str(nrModel))
+    
     run.finish()
     
     # agent.save(f"{MODEL_SAVE_DIR}/model_{nrModel}")
@@ -113,4 +124,9 @@ if __name__ == "__main__":
         help="Name of the environment to play",
     )
     args = parser.parse_args()
-    main(args)
+    
+    try:
+        main(args)
+    except KeyboardInterrupt:
+        print("Training interrupted")
+        # run.finish()
