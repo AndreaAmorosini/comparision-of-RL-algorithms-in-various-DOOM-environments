@@ -90,8 +90,8 @@ class CustomVizDoomWrapper(Wrapper):
     
     def process_frame(self, frame):
         
-        if len(frame.shape) == 2:
-            frame = frame[..., np.newaxis]
+        # if len(frame.shape) == 2:
+        #     frame = frame[..., np.newaxis]
         
         if self.normalize:
             frame = frame/255.0
@@ -118,7 +118,7 @@ class CustomVizDoomWrapper(Wrapper):
         
         #Penalty for losing health
         healthDiff = self.initial_health - health
-        health_penalty = healthDiff * 0.5
+        health_penalty = healthDiff * 1
         reward -= health_penalty
         
         #Reward for increasing killcount
@@ -128,7 +128,7 @@ class CustomVizDoomWrapper(Wrapper):
 
         #Reward for killcount incremental
         self.killcount = killcount
-        killcount_reward = killcount * 1
+        killcount_reward = killcount * 10
         reward += killcount_reward
           
         return reward

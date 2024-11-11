@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 import cv2
 import gymnasium
 import gymnasium.wrappers.human_rendering
+from gymnasium.wrappers import FlattenObservation
 import numpy as np
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
@@ -34,6 +35,7 @@ BATCH_SIZE = 64
 GAMMA = 0.99
 CLIP_RANGE = 0.1
 GAE_LAMBDA = 0.9
+ENT_COEF = 0.0
 
 
 CHECKPOINT_DIR = "./checkpoints/train/corridor"
@@ -53,6 +55,7 @@ config = {
     "batch_size": BATCH_SIZE,
     "clip_range": CLIP_RANGE,
     "gae_lambda": GAE_LAMBDA,
+    "ent_coef": ENT_COEF,
 }
 
 
@@ -67,6 +70,7 @@ def main(args):
         env = CustomVizDoomWrapper(env, normalize=True, stack_frames=False, stack_size=1)
         env = gymnasium.wrappers.TransformReward(env, lambda r: r * 0.01)
         # env = ObservationWrapper(env)
+        # env = FlattenObservation(env)
         env = gymnasium.wrappers.HumanRendering(env)
         return env
 
@@ -108,6 +112,7 @@ def main(args):
         gamma=GAMMA,
         clip_range=CLIP_RANGE,
         gae_lambda=GAE_LAMBDA,
+        ent_coef=ENT_COEF,
     )
 
     # Do the actual learning
