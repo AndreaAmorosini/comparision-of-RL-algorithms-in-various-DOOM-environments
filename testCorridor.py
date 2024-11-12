@@ -25,7 +25,7 @@ AVAILABLE_ENVS = [env for env in gymnasium.envs.registry.keys() if "Vizdoom" in 
 IMAGE_SHAPE = (60, 80)
 
 # Training parameters
-TRAINING_TIMESTEPS = 1500000
+TRAINING_TIMESTEPS = 1000000
 N_STEPS = 1024
 N_ENVS = 2
 FRAME_SKIP = 4
@@ -35,7 +35,7 @@ BATCH_SIZE = 64
 GAMMA = 0.99
 CLIP_RANGE = 0.1
 GAE_LAMBDA = 0.9
-ENT_COEF = 0.0
+ENT_COEF = 0.01
 
 
 CHECKPOINT_DIR = "./checkpoints/train/corridor"
@@ -68,9 +68,9 @@ def main(args):
     def wrap_env(env):
         # env = gymnasium.make("VizdoomBasic-v0", render_mode="human", frame_skip=4)
         env = CustomVizDoomWrapper(env, normalize=True, stack_frames=False, stack_size=1)
-        env = gymnasium.wrappers.TransformReward(env, lambda r: r * 0.01)
+        env = gymnasium.wrappers.TransformReward(env, lambda r: r * 0.001)
         # env = ObservationWrapper(env)
-        # env = FlattenObservation(env)
+        env = FlattenObservation(env)
         env = gymnasium.wrappers.HumanRendering(env)
         return env
 
@@ -101,11 +101,13 @@ def main(args):
 
 
     agent = PPO(
-        policies.MultiInputActorCriticPolicy,
+        # policies.MultiInputActorCriticPolicy,
+        policies.ActorCriticPolicy,
         envs,
         n_steps=N_STEPS,
         verbose=2,
         tensorboard_log=LOG_DIR + "/" + run.id,
+        # tensorboard_log=LOG_DIR + "/" + str(nrModel),
         learning_rate=LEARNING_RATE,
         n_epochs=N_EPOCHS,
         batch_size=BATCH_SIZE,

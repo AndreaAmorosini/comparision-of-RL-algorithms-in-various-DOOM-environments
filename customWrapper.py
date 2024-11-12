@@ -41,6 +41,7 @@ class CustomVizDoomWrapper(Wrapper):
                 
         # self.initial_ammo = observation[0]["gamevariables"][0]
         self.initial_health = observation[0]["gamevariables"][1]
+        self.health = self.initial_health
         self.killcount = 0
         # if isinstance(observation, list):
         #     observation = observation[0]
@@ -116,9 +117,10 @@ class CustomVizDoomWrapper(Wrapper):
         # health_reward = health * 1
         # reward += health_reward
         
-        #Penalty for losing health
-        healthDiff = self.initial_health - health
+        # Penalty for losing health
+        healthDiff = self.health - health
         health_penalty = healthDiff * 1
+        self.health = health
         reward -= health_penalty
         
         #Reward for increasing killcount
@@ -127,9 +129,14 @@ class CustomVizDoomWrapper(Wrapper):
         #     self.killcount = killcount
 
         #Reward for killcount incremental
-        self.killcount = killcount
-        killcount_reward = killcount * 10
-        reward += killcount_reward
+        # self.killcount = killcount
+        # killcount_reward = killcount * 1.5
+        # reward += killcount_reward
+        
+        #Reward for incrementing killcount
+        if killcount > self.killcount:
+            reward *= 0.55
+            self.killcount = killcount
           
         return reward
     

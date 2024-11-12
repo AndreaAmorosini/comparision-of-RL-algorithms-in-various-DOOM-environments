@@ -9,6 +9,7 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.evaluation import evaluate_policy
 import time
 from customWrapper import CustomVizDoomWrapper
+from gymnasium.wrappers import FlattenObservation
 
 
 IMAGE_SHAPE = (60, 80)
@@ -71,7 +72,7 @@ class ObservationWrapper(gym.ObservationWrapper):
 # Define the path to your saved model
 # MODEL_PATH = "final_models/basic/model_0.zip"
 # MODEL_PATH = "final_models/center/model_22/model.zip"
-MODEL_PATH = "final_models/corridor/model_8/model.zip"
+MODEL_PATH = "final_models/corridor/model_12/model.zip"
 
 
 # Load the trained model
@@ -91,6 +92,7 @@ env = CustomVizDoomWrapper(env=env, normalize=True, stack_frames=False, stack_si
 # env = ObservationWrapper(env)
 # env = gym.wrappers.FrameStackObservation(env, num_stack=4, padding_type = "zero")
 # env = gym.wrappers.NormalizeObservation(env)
+env = FlattenObservation(env)
 env = gym.wrappers.TransformReward(env, lambda r: r * 0.01)
 env = gym.wrappers.HumanRendering(env)
 
