@@ -118,10 +118,11 @@ class CustomVizDoomWrapper(Wrapper):
         # reward += health_reward
         
         # Penalty for losing health
-        healthDiff = self.health - health
-        health_penalty = healthDiff * 1
-        self.health = health
-        reward -= health_penalty
+        # healthDiff = self.health - health
+        # health_penalty = healthDiff * 50
+        # self.health = health
+        # reward -= health_penalty
+        
         
         #Reward for increasing killcount
         # if killcount > self.killcount:
@@ -134,9 +135,17 @@ class CustomVizDoomWrapper(Wrapper):
         # reward += killcount_reward
         
         #Reward for incrementing killcount
-        if killcount > self.killcount:
-            reward *= 0.55
-            self.killcount = killcount
+        # if killcount > self.killcount:
+        #     reward += (reward * 0.75)
+        #     self.killcount = killcount
+            
+        #Kill multiplier    
+        self.killcount = killcount
+        if killcount > 0 and reward >= 0:
+            reward *= killcount
+        elif killcount == 0:
+            reward += 100
+
           
         return reward
     

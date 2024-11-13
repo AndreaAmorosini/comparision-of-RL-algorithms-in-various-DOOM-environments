@@ -72,7 +72,7 @@ class ObservationWrapper(gym.ObservationWrapper):
 # Define the path to your saved model
 # MODEL_PATH = "final_models/basic/model_0.zip"
 # MODEL_PATH = "final_models/center/model_22/model.zip"
-MODEL_PATH = "final_models/corridor/model_12/model.zip"
+MODEL_PATH = "final_models/corridor/model_24/model.zip"
 
 
 # Load the trained model
@@ -93,7 +93,7 @@ env = CustomVizDoomWrapper(env=env, normalize=True, stack_frames=False, stack_si
 # env = gym.wrappers.FrameStackObservation(env, num_stack=4, padding_type = "zero")
 # env = gym.wrappers.NormalizeObservation(env)
 env = FlattenObservation(env)
-env = gym.wrappers.TransformReward(env, lambda r: r * 0.01)
+env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
 env = gym.wrappers.HumanRendering(env)
 
 mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=100, render=True)
