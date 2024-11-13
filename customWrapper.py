@@ -135,16 +135,22 @@ class CustomVizDoomWrapper(Wrapper):
         # reward += killcount_reward
         
         #Reward for incrementing killcount
-        # if killcount > self.killcount:
-        #     reward += (reward * 0.75)
-        #     self.killcount = killcount
+        if killcount > self.killcount:
+            reward += ((self.killcount - killcount) * 5)
+            self.killcount = killcount
+            
+        time_penalty = 0.01
+        reward -= time_penalty
+        
+        survival_reward = 0.1
+        reward += survival_reward
             
         #Kill multiplier    
-        self.killcount = killcount
-        if killcount > 0 and reward >= 0:
-            reward *= killcount
-        elif killcount == 0:
-            reward += 100
+        # self.killcount = killcount
+        # if killcount > 0 and reward >= 0:
+        #     reward *= killcount
+        # elif killcount == 0:
+        #     reward += 100
 
           
         return reward
