@@ -25,7 +25,7 @@ AVAILABLE_ENVS = [env for env in gymnasium.envs.registry.keys() if "Vizdoom" in 
 IMAGE_SHAPE = (60, 80)
 
 # Training parameters
-TRAINING_TIMESTEPS = 1000000
+TRAINING_TIMESTEPS = 1500000
 N_STEPS = 2048
 N_ENVS = 1
 FRAME_SKIP = 4
@@ -33,9 +33,9 @@ LEARNING_RATE = 1e-4
 N_EPOCHS = 10
 BATCH_SIZE = 64
 GAMMA = 0.99
-CLIP_RANGE = 0.1
-GAE_LAMBDA = 0.9
-ENT_COEF = 0.1
+CLIP_RANGE = 0.2
+GAE_LAMBDA = 0.95
+ENT_COEF = 0.0
 
 
 CHECKPOINT_DIR = "./checkpoints/train/corridor"
@@ -56,6 +56,8 @@ config = {
     "clip_range": CLIP_RANGE,
     "gae_lambda": GAE_LAMBDA,
     "ent_coef": ENT_COEF,
+    "RESOLUTION": "320x240",
+    "COLOR_SPACE": "RGB",
 }
 
 
@@ -67,10 +69,10 @@ def main(args):
     #     This may lead to unstable learning, and we scale the rewards by 1/100
     def wrap_env(env):
         # env = gymnasium.make("VizdoomBasic-v0", render_mode="human", frame_skip=4)
-        env = CustomVizDoomWrapper(env, normalize=True, stack_frames=False, stack_size=1)
-        env = gymnasium.wrappers.TransformReward(env, lambda r: r * 0.001)
+        env = CustomVizDoomWrapper(env, normalize=False, stack_frames=False, stack_size=1)
+        env = gymnasium.wrappers.TransformReward(env, lambda r: r / 1000)
         # env = ObservationWrapper(env)
-        env = FlattenObservation(env)
+        # env = FlattenObservation(env)
         env = gymnasium.wrappers.HumanRendering(env)
         return env
 
@@ -92,7 +94,7 @@ def main(args):
         project="vizdoom",
         name="vizdoom-Corridor" + str(nrModel),
         group="corridor",
-        tags=["ppo", "vizdoom", "DeadlyCorridor"],
+        tags=["ppo", "vizdoom", "DeadlyCorridor", config["RESOLUTION"], config["COLOR_SPACE"]],
         config=config,
         sync_tensorboard=True,
         save_code=True,
@@ -102,12 +104,12 @@ def main(args):
 
     agent = PPO(
         # policies.MultiInputActorCriticPolicy,
-        policies.ActorCriticPolicy,
+        # policies.ActorCriticPolicy,
+        policies.ActorCriticCnnPolicy,
         envs,
         n_steps=N_STEPS,
-        verbose=2,
+        verbose=1,
         tensorboard_log=LOG_DIR + "/" + run.id,
-        # tensorboard_log=LOG_DIR + "/" + str(nrModel),
         learning_rate=LEARNING_RATE,
         n_epochs=N_EPOCHS,
         batch_size=BATCH_SIZE,
@@ -124,11 +126,11 @@ def main(args):
         total_timesteps=TRAINING_TIMESTEPS,
         callback=WandbCallback(
             model_save_path=f"{MODEL_SAVE_DIR}/model_{nrModel}",
-            verbose=2,
+            verbose=1,
         ),
     )
 
-    # agent.save(f"{MODEL_SAVE_DIR}/model_{nrModel}")
+    agent.save(f"{MODEL_SAVE_DIR}/model_{nrModel}")
     
     run.finish()
 

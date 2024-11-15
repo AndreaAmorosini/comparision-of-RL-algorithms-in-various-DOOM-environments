@@ -71,8 +71,8 @@ class ObservationWrapper(gym.ObservationWrapper):
 
 # Define the path to your saved model
 # MODEL_PATH = "final_models/basic/model_0.zip"
-# MODEL_PATH = "final_models/center/model_22/model.zip"
-MODEL_PATH = "final_models/corridor/model_24/model.zip"
+MODEL_PATH = "final_models/center/model_26/model.zip"
+# MODEL_PATH = "final_models/corridor/model_32/model.zip"
 
 
 # Load the trained model
@@ -80,20 +80,20 @@ model = PPO.load(MODEL_PATH)
 
 # doom_env = "VizdoomBasic-v0"
 # doom_env = "VizdoomCorridor-v0"
-doom_env = "VizdoomCorridor-custom-v0"
+# doom_env = "VizdoomCorridor-custom-v0"
 # doom_env = "VizdoomDefendCenter-v0"
-# doom_env = "VizdoomDefendCenter-custom-v0"
+doom_env = "VizdoomDefendCenter-custom-v0"
 
 
 # Initialize the environment for playing (same config as training)
 env = gym.make(doom_env, render_mode="rgb_array", frame_skip=4)
 #Only for basic env
-env = CustomVizDoomWrapper(env=env, normalize=True, stack_frames=False, stack_size=1)
-# env = ObservationWrapper(env)
+env = CustomVizDoomWrapper(env=env, normalize=False, stack_frames=False, stack_size=1)
+# env = gym.wrappers.TransformReward(env, lambda r: r / 1000)
 # env = gym.wrappers.FrameStackObservation(env, num_stack=4, padding_type = "zero")
 # env = gym.wrappers.NormalizeObservation(env)
-env = FlattenObservation(env)
-env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
+# env = FlattenObservation(env)
+# env = gym.wrappers.RecordVideo(env, "videos/corridor/", episode_trigger=lambda x: x % 50 == 0, name_prefix="model_29")
 env = gym.wrappers.HumanRendering(env)
 
 mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=100, render=True)
