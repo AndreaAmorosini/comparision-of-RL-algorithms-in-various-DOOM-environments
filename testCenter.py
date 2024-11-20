@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 
 import cv2
 import gymnasium
+import gymnasium.wrappers.frame_stack
 import gymnasium.wrappers.human_rendering
 import numpy as np
 from stable_baselines3 import PPO
@@ -25,9 +26,9 @@ IMAGE_SHAPE = (60, 80)
 EVAL_FREQ = 50000
 
 # Training parameters
-TRAINING_TIMESTEPS = 1500000
-N_STEPS = 2048
-N_ENVS = 1
+TRAINING_TIMESTEPS = 1000000
+N_STEPS = 1024
+N_ENVS = 2
 FRAME_SKIP = 4
 LEARNING_RATE = 1e-4
 N_EPOCHS = 10
@@ -89,7 +90,9 @@ def main(args):
     )
 
     agent = PPO(
-        policies.ActorCriticCnnPolicy, envs,
+        # policies.ActorCriticCnnPolicy,
+        policies.ActorCriticPolicy,
+        envs,
         n_steps=N_STEPS,
         verbose=1,
         tensorboard_log=LOG_DIR + "/" + run.id,

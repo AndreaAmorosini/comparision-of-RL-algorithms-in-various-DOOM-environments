@@ -166,11 +166,17 @@ class CustomVizDoomWrapper(Wrapper):
             ammo_delta = ammo - self.ammo
             self.ammo = ammo
             
-            if health_delta < 0:
-                current_reward -= 0.5
+            # if health_delta < 0:
+            #     current_reward -= 0.5
             
-            if ammo_delta != 0:
-                current_reward += (ammo_delta * 0.25)
+            # if ammo_delta != 0:
+            #     current_reward += (ammo_delta * 0.25)
+             
+             #Bonus for not wasting ammo   
+            # optimal_ammo = self.initial_ammo - killcount
+            # delta_optimal_ammo = optimal_ammo - ammo
+            # if delta_optimal_ammo < 3:
+            #     current_reward += 10
 
 
         
