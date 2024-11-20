@@ -5,7 +5,8 @@ import gymnasium
 import gymnasium.wrappers.human_rendering
 from gymnasium.wrappers import FlattenObservation
 import numpy as np
-from stable_baselines3 import PPO
+import stable_baselines3
+from stable_baselines3 import PPO, DQN, A2C
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import BaseCallback
 import os
@@ -24,7 +25,8 @@ AVAILABLE_ENVS = [env for env in gymnasium.envs.registry.keys() if "Vizdoom" in 
 # Height and width of the resized image
 IMAGE_SHAPE = (60, 80)
 
-# Training parameters
+# Training parameters PPO
+MODEL = "PPO"
 TRAINING_TIMESTEPS = 1500000
 N_STEPS = 2048
 N_ENVS = 1
@@ -36,6 +38,26 @@ GAMMA = 0.99
 CLIP_RANGE = 0.2
 GAE_LAMBDA = 0.95
 ENT_COEF = 0.0
+
+# Training parameters for DQN
+# MODEL = "DQN"
+# TRAINING_TIMESTEPS = 1000000
+# N_ENVS = 2
+# FRAME_SKIP = 4
+# LEARNING_RATE = 1e-4
+# BATCH_SIZE = 32
+# GAMMA = 0.99
+
+# Training parameters for A2C
+# MODEL = "A2C"
+# TRAINING_TIMESTEPS = 1000000
+# N_ENVS = 2
+# FRAME_SKIP = 4
+# LEARNING_RATE = 1e-4
+# GAMMA = 0.99
+# N_STEPS = 5
+# GAE_LAMBDA = 1.0
+# ENT_COEF = 0.0
 
 
 CHECKPOINT_DIR = "./checkpoints/train/corridor"
@@ -60,19 +82,38 @@ config = {
     "COLOR_SPACE": "RGB",
 }
 
+# For DQN
+# config = {
+#     "env": DEFAULT_ENV,
+#     "training_timesteps": TRAINING_TIMESTEPS,
+#     "frame_skip": FRAME_SKIP,
+#     "learning_rate": LEARNING_RATE,
+#     "gamma": GAMMA,
+#     "batch_size": BATCH_SIZE,
+#     "RESOLUTION": "320x240",
+#     "COLOR_SPACE": "RGB",
+# }
+
+# FOR A2C
+# config = {
+#     "env": DEFAULT_ENV,
+#     "training_timesteps": TRAINING_TIMESTEPS,
+#     "frame_skip": FRAME_SKIP,
+#     "learning_rate": LEARNING_RATE,
+#     "gamma": GAMMA,
+#     "n_steps": N_STEPS,
+#     "gae_lambda": GAE_LAMBDA,
+#     "ent_coef": ENT_COEF,
+#     "RESOLUTION": "320x240",
+#     "COLOR_SPACE": "RGB",
+#     "n_step" : N_STEPS
+# }
+
 
 def main(args):
-    # Create multiple environments: this speeds up training with PPO
-    # We apply two wrappers on the environment:
-    #  1) The above wrapper that modifies the observations (takes only the image and resizes it)
-    #  2) A reward scaling wrapper. Normally the scenarios use large magnitudes for rewards (e.g., 100, -100).
-    #     This may lead to unstable learning, and we scale the rewards by 1/100
     def wrap_env(env):
-        # env = gymnasium.make("VizdoomBasic-v0", render_mode="human", frame_skip=4)
         env = CustomVizDoomWrapper(env, normalize=False, stack_frames=False, stack_size=1)
         env = gymnasium.wrappers.TransformReward(env, lambda r: r / 1000)
-        # env = ObservationWrapper(env)
-        # env = FlattenObservation(env)
         env = gymnasium.wrappers.HumanRendering(env)
         return env
 
@@ -94,7 +135,7 @@ def main(args):
         project="vizdoom",
         name="vizdoom-Corridor" + str(nrModel),
         group="corridor",
-        tags=["ppo", "vizdoom", "DeadlyCorridor", config["RESOLUTION"], config["COLOR_SPACE"]],
+        tags=[MODEL, "vizdoom", "DeadlyCorridor", config["RESOLUTION"], config["COLOR_SPACE"]],
         config=config,
         sync_tensorboard=True,
         save_code=True,
@@ -118,6 +159,26 @@ def main(args):
         gae_lambda=GAE_LAMBDA,
         ent_coef=ENT_COEF,
     )
+    
+    # agent = DQN(
+    #     stable_baselines3.dqn.CnnPolicy,
+    #     envs,
+    #     learning_rate=LEARNING_RATE,
+    #     batch_size=BATCH_SIZE,
+    #     gamma=GAMMA,
+        
+    # )
+    
+    # agent = A2C(
+    #     policies.ActorCriticCnnPolicy,
+    #     envs,
+    #     learning_rate=LEARNING_RATE,
+    #     n_steps=N_STEPS,
+    #     gamma=GAMMA,
+    #     gae_lambda=GAE_LAMBDA,
+    #     ent_coef=ENT_COEF
+    # )
+
 
     # Do the actual learning
     # This will print out the results in the console.
