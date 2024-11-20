@@ -43,22 +43,24 @@ EVAL_FREQ = 50000
 #Training parameters for DQN
 MODEL = "DQN"
 TRAINING_TIMESTEPS = 1000000
-N_ENVS = 2
+N_ENVS = 1
 FRAME_SKIP = 4
 LEARNING_RATE = 1e-4
 BATCH_SIZE = 32
 GAMMA = 0.99
+BUFFER_SIZE = 10000
+TRAIN_FREQ = 4
 
 #Training parameters for A2C
-MODEL = "A2C"
-TRAINING_TIMESTEPS = 1000000
-N_ENVS = 2
-FRAME_SKIP = 4
-LEARNING_RATE = 1e-4
-GAMMA = 0.99
-N_STEPS = 5
-GAE_LAMBDA = 1.0
-ENT_COEF = 0.0
+# MODEL = "A2C"
+# TRAINING_TIMESTEPS = 1000000
+# N_ENVS = 2
+# FRAME_SKIP = 4
+# LEARNING_RATE = 1e-4
+# GAMMA = 0.99
+# N_STEPS = 5
+# GAE_LAMBDA = 1.0
+# ENT_COEF = 0.0
 
 
 CHECKPOINT_DIR = "./checkpoints/train/center"
@@ -93,6 +95,8 @@ config = {
     "batch_size": BATCH_SIZE,
     "RESOLUTION": "320x240",
     "COLOR_SPACE": "RGB",
+    "buffer_size": BUFFER_SIZE,
+    "train_freq": TRAIN_FREQ,
 }
 
 #FOR A2C
@@ -159,7 +163,10 @@ def main(args):
         learning_rate=LEARNING_RATE,
         batch_size=BATCH_SIZE,
         gamma=GAMMA,
-        
+        tensorboard_log=LOG_DIR + "/" + run.id,
+        verbose = 1,
+        buffer_size=BUFFER_SIZE,
+        train_freq=TRAIN_FREQ,
     )
     
     # agent = A2C(
@@ -169,7 +176,9 @@ def main(args):
     #     n_steps=N_STEPS,
     #     gamma=GAMMA,
     #     gae_lambda=GAE_LAMBDA,
-    #     ent_coef=ENT_COEF
+    #     ent_coef=ENT_COEF,
+    #     verbose = 1,
+    #     tensorboard_log=LOG_DIR + "/" + run.id,
     # )
 
 

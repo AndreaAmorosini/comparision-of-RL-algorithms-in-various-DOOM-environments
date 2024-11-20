@@ -71,7 +71,7 @@ class ObservationWrapper(gym.ObservationWrapper):
 
 # Define the path to your saved model
 # MODEL_PATH = "final_models/basic/model_0.zip"
-MODEL_PATH = "final_models/center/model_36/model.zip"
+MODEL_PATH = "final_models/center/model_38/model.zip"
 # MODEL_PATH = "final_models/corridor/model_32/model.zip"
 
 
