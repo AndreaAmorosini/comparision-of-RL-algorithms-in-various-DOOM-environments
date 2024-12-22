@@ -27,6 +27,7 @@ class CustomVizDoomWrapper(Wrapper):
         self.killcount = 0
         self.health = 100
         self.ammo = 26
+        self.armor = 0
         
         image_space = env.observation_space["screen"]
         game_var_space = env.observation_space["gamevariables"]
@@ -53,6 +54,8 @@ class CustomVizDoomWrapper(Wrapper):
         self.killcount = 0
         self.initial_ammo = observation[0]["gamevariables"][2]
         self.ammo = self.initial_ammo
+        if "VizdoomDeathmatch" in self.env_id:
+            self.armor = observation[0]["gamevariables"][3]
         # if isinstance(observation, list):
         #     observation = observation[0]
         
@@ -94,7 +97,10 @@ class CustomVizDoomWrapper(Wrapper):
             stacked_obs = {
                 "frame" : processed_frame,
                 "gamevariables" : observation["gamevariables"]
-            }      
+            } 
+            
+        # if terminated:
+        #     print("KILLCOUNT " + str(self.killcount))     
 
         shaped_reward = self.shape_reward(reward, observation["gamevariables"])
         
@@ -139,6 +145,8 @@ class CustomVizDoomWrapper(Wrapper):
         
         #Rewards for Deadly Corridor
         if "VizdoomCorridor" in self.env_id:
+            
+            current_reward = current_reward / 5
         
             health_delta = health - self.health
             self.health = health
@@ -166,11 +174,13 @@ class CustomVizDoomWrapper(Wrapper):
             ammo_delta = ammo - self.ammo
             self.ammo = ammo
             
-            # if health_delta < 0:
-            #     current_reward -= 0.5
+            self.killcount = killcount
             
-            # if ammo_delta != 0:
-            #     current_reward += (ammo_delta * 0.25)
+            if health_delta < 0:
+                current_reward -= 0.5
+            
+            if ammo_delta != 0:
+                current_reward += (ammo_delta * 0.25)
              
              #Bonus for not wasting ammo   
             # optimal_ammo = self.initial_ammo - killcount
@@ -178,8 +188,46 @@ class CustomVizDoomWrapper(Wrapper):
             # if delta_optimal_ammo < 3:
             #     current_reward += 10
 
-
-        
+        if "VizdoomHealthGathering" in self.env_id:
+            health_delta = health - self.health
+            self.health = health
+            
+            # print("HEALTH DELTA " + str(health_delta))
+            
+            # if health_delta > 0:
+            #     current_reward += health_delta
+                
+            if health_delta > 0:
+                current_reward += 5
+                
+            # if health_delta < 0:
+            #     current_reward -= 0.1
+                                    
+            # if health_delta < 0:
+            #     current_reward -= 5
+            
+        if "VizdoomDeathmatch" in self.env_id:
+            
+            current_reward = 0
+            
+            armor = game_variables[3] 
+            
+            if killcount > self.killcount:
+                current_reward += 1
+                self.killcount = killcount
+                
+            if health < self.health:
+                current_reward -= 0.1
+                
+            if health > self.health:
+                current_reward += 0.1
+                
+            if armor < self.armor:
+                current_reward -= 0.1
+            
+            if armor > self.armor:
+                current_reward += 0.1
+                 
         #Reward for increasing killcount
         # if killcount > self.killcount:
         #     reward += 1
