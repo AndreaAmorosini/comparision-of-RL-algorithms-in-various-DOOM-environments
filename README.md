@@ -14,8 +14,8 @@ conda activate vizdoom
 ```
 <br>
 
-Inoltre per poter replicare la reward shaping di questo progetto e' necessario importare gli environment custom all'interno della libreria di VizDoom, questo accedendo al file __init__.py all'interno del pacchetto vizdoom (Per semplicità basta andare nello script train.py in un qualunque IDE e selezionare l'import di "vizdoom.gymnasium_wrapper" e premere F12).
-Una volta nel file __init__.py corretto bisogna aggiungere i seguenti snippets al codice:
+Inoltre per poter replicare la reward shaping di questo progetto e' necessario importare gli environment custom all'interno della libreria di VizDoom, questo accedendo al file \_\_init\_\_.py all'interno del pacchetto vizdoom (Per semplicità basta andare nello script train.py in un qualunque IDE e selezionare l'import di "vizdoom.gymnasium_wrapper" e premere F12).
+Una volta nel file \_\_init\_\_.py corretto bisogna aggiungere i seguenti snippets al codice:
 ```
 register(
     id="VizdoomCorridor-custom-v0",
