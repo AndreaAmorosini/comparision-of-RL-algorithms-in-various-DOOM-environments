@@ -126,3 +126,5 @@ Per poter replicare l'ottimizzazione degli iperparametri di uno dei modelli svil
 
 
 Nella cartella [video](./videos/) sono inoltre presenti varie demo registrate delle performance di tutti i modelli finali
+
+Nella cartella [results](./results/) sono invece presenti i vari grafici sulla reward e lunghezza media per episodio e i grafici sull'importanza degli iperparametri estrapolati da optuna.
