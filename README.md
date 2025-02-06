@@ -42,7 +42,7 @@ Sostituendo $BASEPATH con il proprio path.
 I seguenti script sono disponibili per la visualizzazione e la replicazione degli esperimenti:<br><br>
 
 ```
-python evaluate.py --env DeadlyCorridor --model PPO --model_number_id 38 --eval_episodes 10
+python evaluate.py --env DeadlyCorridor --model PPO --model_number_id 38 --use_baseline_model
 ```
 Per poter visualizzare uno dei modelli sviluppati in azione ed eseguire una valutazione su 
 piu' episodi
@@ -64,6 +64,12 @@ piu' episodi
 
 - **--eval_episodes** \
   Specifica il numero di episodi di valutazione da eseguire.
+
+- **--use_baseline_model** \
+  Flag per valuatre e visualizzare il modello allenato con i parametri di default.
+
+- **--use_best_model** \
+  Flag per valutare e visualizzare il modello allenato con i parametri ottimizzati.
 
 </details><br><br>
 

@@ -1,5 +1,6 @@
 import gymnasium as gym
 from stable_baselines3 import PPO, DQN, A2C
+from stable_baselines3.common.monitor import Monitor
 import cv2
 import matplotlib.pyplot as plt
 import time
@@ -23,7 +24,19 @@ def main(args):
         "DeadlyCorridor": "corridor",
     }
     env_path = env_paths[args.env]
-    MODEL_PATH = f"final_models/{env_path}/model_{args.model_number_id}/model.zip"
+    
+    if (args.use_baseline_model and args.use_best_model) or (args.use_baseline_model and args.model_number_id) or (args.use_best_model and args.model_number_id) or (args.use_baseline_model and args.use_best_model and args.model_number_id):
+        print("Si e' pregati di selezionare solo un modello da visualizzare.")
+    
+    if args.use_baseline_model:
+        MODEL_PATH = f"final_models1/{env_path}/{args.model}_Baseline/model.zip"
+        VIDEO_PATH = f"videos/{args.env}/{args.model}/{args.model}_Baseline/"
+    elif args.use_best_model:
+        MODEL_PATH = f"final_models1/{env_path}/{args.model}_BestParams/model.zip"
+        VIDEO_PATH = f"videos/{args.env}/{args.model}/{args.model}_BestParams/"
+    else:
+        MODEL_PATH = f"final_models/{env_path}/model_{args.model_number_id}/model.zip"
+        VIDEO_PATH = f"videos/{args.env}/{args.model}/model_{args.model_number_id}/"
     
     if not os.path.exists(MODEL_PATH):
         print(f"Model {MODEL_PATH} does not exist.")
@@ -47,12 +60,15 @@ def main(args):
     env = CustomVizDoomWrapper(env=env, normalize=False)
     if args.env == "DeadlyCorridor":
         env = gym.wrappers.TransformReward(env, lambda r: r / 1000)
-    # env = gym.wrappers.TransformReward(env, lambda r: r / 1000)
-    env = gym.wrappers.HumanRendering(env)
+    if args.record_video:
+        env = gym.wrappers.RecordVideo(env, video_folder=VIDEO_PATH)
+    else:
+        env = gym.wrappers.HumanRendering(env)
     env = gym.wrappers.ResizeObservation(env, shape=(160, 120))
     env = gym.wrappers.GrayScaleObservation(env, keep_dim=True)
+    env = Monitor(env)
 
-    mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=10, render=True)
+    mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=args.eval_episodes, render=True)
 
     print(mean_reward)
 
@@ -73,7 +89,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--model_number_id",
-        default=38,
+        # default=38,
         type=int,
         help="Model Number ID",
     )
@@ -82,6 +98,24 @@ if __name__ == "__main__":
         default=10,
         type=int,
         help="Number of episodes to evaluate the model",
+    )
+    parser.add_argument(
+        "--use_baseline_model",
+        default=False,
+        action="store_true",
+        help="Use the baseline model for evaluation",
+    )
+    parser.add_argument(
+        "--use_best_model",
+        default=False,
+        action="store_true",
+        help="Use the best model for evaluation",
+    )
+    parser.add_argument(
+        "--record_video",
+        default=False,
+        action="store_true",
+        help="Record video of the evaluation",
     )
     args = parser.parse_args()
 

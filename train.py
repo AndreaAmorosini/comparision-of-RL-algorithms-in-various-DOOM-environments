@@ -14,7 +14,7 @@ from stable_baselines3.common import evaluation, policies
 import os
 import wandb
 from wandb.integration.sb3 import WandbCallback
-from customWrapper import CustomVizDoomWrapper, ObservationWrapper
+from customWrapper import CustomVizDoomWrapper
 import vizdoom.gymnasium_wrapper  # noqa
 
 AVAILABLE_ENVS = [env for env in gymnasium.envs.registry.keys() if "Vizdoom" in env]
