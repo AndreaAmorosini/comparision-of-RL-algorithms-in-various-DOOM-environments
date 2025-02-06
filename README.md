@@ -71,6 +71,9 @@ piu' episodi
 - **--use_best_model** \
   Flag per valutare e visualizzare il modello allenato con i parametri ottimizzati.
 
+- **--record_video** \
+  Flag per registrare un video dell'agente in azione (percorso di default "/$PROJECT_ROOT/videos/$ENV_NAME/$MODEL_NAME")
+
 </details><br><br>
 
 
@@ -120,3 +123,6 @@ Per poter replicare l'ottimizzazione degli iperparametri di uno dei modelli svil
 - **--n_trials** \
   Specifica il numero di trials per l'ottimizzazione da eseguire.
 </details><br><br>
+
+
+Nella cartella [video](./videos/) sono inoltre presenti varie demo registrate delle performance di tutti i modelli finali

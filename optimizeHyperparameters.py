@@ -15,7 +15,7 @@ from stable_baselines3.common.logger import configure
 import os
 import wandb
 from wandb.integration.sb3 import WandbCallback
-from customWrapper import CustomVizDoomWrapper, ObservationWrapper
+from customWrapper import CustomVizDoomWrapper
 from stable_baselines3.common import evaluation, policies
 import optuna
 import optuna_dashboard
