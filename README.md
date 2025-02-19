@@ -1,4 +1,4 @@
-# doom_rl
+# comparision-of-RL-algorithms-in-various-DOOM-environments
 Analisi e comparazione di tre differenti algoritmi di Reinforcement Learning (PPO, DQN e A2C) nel gioco di Doom su tre ambienti diversi forniti dalla libreria VizDoom (DeadlyCorridor, DefendTheCenter, HealthGathering) e studio sull'ottimizzazione degli iperparametri per i modelli migliori
 
 Tutti i modelli sviluppati sono disponibili al seguente [link](https://drive.google.com/drive/folders/1corM8rfArfy-ZTTIRUcE_bKYuVFaOvNK?usp=sharing), una volta scaricata la cartella "final_models" basterà copiarla nella root del progetto.
